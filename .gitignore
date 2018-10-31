@@ -10,3 +10,5 @@ __pycache__
 MANIFEST
 .idea
 mysite/db.sqlite3
+!mysite/handaioh_NLP/utils/data/.gitkeep
+mysite/handaioh_NLP/utils/data/
