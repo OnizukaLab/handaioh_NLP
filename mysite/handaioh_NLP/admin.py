@@ -1,3 +1,4 @@
 from django.contrib import admin
+from handaioh_NLP.models import *
 
-# Register your models here.
+admin.site.register(Quiz)
