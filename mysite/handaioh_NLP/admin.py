@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import Quiz
+
+from handaioh_NLP import models
 # Register your models here.
 
-@admin.register(Quiz)
-class QuizAdmin(admin.ModelAdmin):
-    pass
+admin.site.register(models.Quiz)
