@@ -1,10 +1,6 @@
 FROM ubuntu:16.04
 MAINTAINER handioh NLPteam <nishikigi.nlp@gmail.com>
 
-# add an user
-RUN useradd -m python_user
-WORKDIR /home/python_user
-
 # apt-get
 RUN apt-get update
 RUN apt-get -y upgrade
