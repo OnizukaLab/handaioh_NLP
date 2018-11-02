@@ -14,12 +14,12 @@ ENV PATH $PYENV_ROOT/bin:$PATH
 RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
     eval "$(pyenv init -)"
 
-RUN pyenv install 3.5.2
-RUN pyenv global 3.5.2
+RUN pyenv install anaconda3-4.2.0
+RUN pyenv global anaconda3-4.2.0
 
 # install python3 packages
-RUN pip install --upgrade pip
-RUN pip install mecab-python3
+RUN pip3 install --upgrade pip
+RUN pip3 install mecab-python3
 
 # character encoding
 RUN locale-gen en_US.UTF-8
@@ -33,7 +33,10 @@ RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git /usr
 /usr/src/mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 RUN mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd/
 
-WORKDIR /home/python_user
+RUN git clone -b develop https://github.com/OnizukaLab/handaioh_NLP.git /home/handaioh/
+ADD ./mysite/handaioh_NLP/utils/data/ /home/handaioh/mysite/handaioh_NLP/utils/data/
+
+WORKDIR /home/handaioh/
 EXPOSE 16000
 CMD ["/bin/bash"]
 
