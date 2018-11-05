@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import random
-from .utils.Spotlight_return import Spotlight_retun
+from .utils.Spotlight_return import Spotlight_return
 from .utils.Candidate_selector import Candidate_selector
 
 sys.path.append('handaioh_NLP/utils/')

@@ -2,14 +2,17 @@
 from requests_oauthlib import OAuth1Session
 import json
 from pprint import pprint
+import sys
+sys.path.append('handaioh_NLP/utils/')
 from Spotlight_return import check_spotlight
 import sqlite3
 import datetime
 
-con = sqlite3.connect('../../db.sqlite3')
+
+con = sqlite3.connect('./db.sqlite3')
 
 def get_key():
-    text_name = '.key'
+    text_name = './handaioh_NLP/utils/.key'
     with open(text_name, 'r') as f:
         CK, CS, AT, AS = f.read().strip().split('\n')
     return CK, CS, AT, AS

@@ -1,9 +1,14 @@
 import spotlight
 import random
 from pprint import pprint
-# from Candidate_selector import Candidate_selector
+from mysite.settings import BASE_DIR
+from pathlib import Path
+import sys
+sys.path.append(str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/').resolve()))
+from Candidate_selector import Candidate_selector
 
 spotlight_server = 'http://localhost:2250/rest/annotate'
+# spotlight_server = '10.0.16.1:2250/rest/annotate'
 
 def Spotlight_return(sentence):
     annotations = spotlight.annotate(spotlight_server, sentence)
@@ -31,10 +36,10 @@ def check_spotlight(tweets_list):
             annotations = spotlight.annotate(spotlight_server, text)
             for j in range(len(annotations)):
                 word = annotations[j]['URI'].split('/')[-1]
-                # if Candidate_selector(word):
-                #     quiz_cand_list.append(tweets_list[i])
-                #     break
-            quiz_cand_list.append(tweets_list[i])
+                if Candidate_selector(word):
+                    quiz_cand_list.append(tweets_list[i])
+                    break
+            # quiz_cand_list.append(tweets_list[i])
         except:
             pass
     return quiz_cand_list
