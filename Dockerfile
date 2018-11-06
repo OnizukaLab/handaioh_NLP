@@ -37,6 +37,5 @@ RUN git clone -b develop https://github.com/OnizukaLab/handaioh_NLP.git /home/ha
 ADD ./mysite/handaioh_NLP/utils/data/ /home/handaioh/mysite/handaioh_NLP/utils/data/
 
 WORKDIR /home/handaioh/
-EXPOSE 16000
 CMD ["/bin/bash"]
 
