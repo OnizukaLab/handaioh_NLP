@@ -7,8 +7,8 @@ import sys
 sys.path.append(str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/').resolve()))
 from Candidate_selector import Candidate_selector
 
-spotlight_server = 'http://localhost:2250/rest/annotate'
-# spotlight_server = '10.0.16.1:2250/rest/annotate'
+# spotlight_server = 'http://localhost:2250/rest/annotate'
+spotlight_server = 'http://10.0.16.1:2250/rest/annotate'
 
 def Spotlight_return(sentence):
     annotations = spotlight.annotate(spotlight_server, sentence)
@@ -16,7 +16,7 @@ def Spotlight_return(sentence):
     data = {
         'dbpedia_entity': pick_up['URI'].split('/')[-1],
         'word'          : pick_up['surfaceForm'],
-        'q_sentence'    : sentence.replace(pick_up['surfaceForm'], '<question>'),
+        'q_sentence'    : sentence.replace(pick_up['surfaceForm'], '[question]'),
         'origin_text'   : sentence
     }
     return data
