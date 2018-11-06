@@ -23,18 +23,27 @@ class QuizViewSet(APIView):
         qid = random.randint(0,len(data)-1)
 
         quiz = Spotlight_return(data[qid]['text'])
+        favorite_count = data[qid]['favorite_count']
+        retweet_count = data[qid]['retweet_count']
+        date_inf = data[qid]['date_inf']
         # for testing
         # quiz = {'dbpedia_entity': '組織' , 'word': 'NASA', 'q_sentence': '____は8月に打ち上げられた太陽探査機が、太陽に最も接近した人工物として新記録を達成したと発表。'}
         candidates = Candidate_selector(quiz['word'])
+        if candidates is None: candidates = ['___', '___', '___']
         candidates.append(quiz['word'])
         random.shuffle(candidates)
         ans = candidates.index(quiz['word'])
-        if candidates is None: candidates = ['___', '___', '___']
-        return {'quiz': quiz['q_sentence'], 'candidate': candidates, 'ans_id': ans, 'entity_name': quiz['dbpedia_entity']}
 
-
-
-
+        return_data = {
+            'quiz'          : quiz['q_sentence'],
+            'candidate'     : candidates,
+            'ans_id'        : ans,
+            'entity_name'   : quiz['dbpedia_entity'],
+            'favorite_count': favorite_count,
+            'retweet_count' : retweet_count,
+            'date_inf'      : date_inf
+        }
+        return return_data
 
 
 def create_question(request):

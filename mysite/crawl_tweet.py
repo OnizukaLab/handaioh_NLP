@@ -32,7 +32,9 @@ def get_tweet_list(twitter):
             continue
         tweets_list.append({
             'text':text,
-            'date':tweet['created_at']
+            'date':tweet['created_at'],
+            'favorite_count':int(tweet['favorite_count']),
+            'retweet_count':int(tweet['retweet_count'])
         })
     return tweets_list
 
@@ -65,9 +67,11 @@ def add_quiz_data(quiz_cand_list):
     for i in range(len(quiz_cand_list)):
         quiz_data = quiz_cand_list[i]
         text, date = quiz_data['text'], quiz_data['date']
+        favorite_count, retweet_count = quiz_data['favorite_count'], quiz_data['retweet_count']
         year, month, day, hour, minitue, sec = get_shape(date)
 
-        con.execute("insert into handaioh_NLP_quiz (text, date_inf) values (?, ?)", [text, datetime.datetime(year, month, day, hour, minitue, sec)])
+        con.execute("insert into handaioh_NLP_quiz (text, date_inf, favorite_count, retweet_count) values (?, ?, ?, ?)"
+                    , [text, datetime.datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])
         con.commit()
 
 
