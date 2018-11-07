@@ -7,4 +7,7 @@ class Quiz(models.Model):
     text = models.TextField()
     # 日時
     date_inf = models.DateTimeField('date published')
+    favorite_count = models.IntegerField()
+    retweet_count = models.IntegerField()
+
 
