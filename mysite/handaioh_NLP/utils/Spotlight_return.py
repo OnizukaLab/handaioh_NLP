@@ -27,6 +27,7 @@ def Spotlight_return(sentence):
     }
     return data
 
+
 def Spotlight_vocab(word):
     try:
         spotlight.annotate(spotlight_server, word)
