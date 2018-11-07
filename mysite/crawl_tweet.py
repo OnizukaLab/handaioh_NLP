@@ -6,7 +6,10 @@ import sys
 sys.path.append('handaioh_NLP/utils/')
 from Spotlight_return import check_spotlight
 import sqlite3
-import datetime
+import threading
+from datetime import datetime, timedelta
+import sched
+import time
 
 
 con = sqlite3.connect('./db.sqlite3')
@@ -61,6 +64,7 @@ def get_tweet():
     quiz_cand_list = check_spotlight(tweets_list)
     add_quiz_data(quiz_cand_list)
 
+
 def add_quiz_data(quiz_cand_list):
     con.execute("DELETE FROM handaioh_NLP_quiz")
     con.commit()
@@ -71,10 +75,42 @@ def add_quiz_data(quiz_cand_list):
         year, month, day, hour, minitue, sec = get_shape(date)
 
         con.execute("insert into handaioh_NLP_quiz (text, date_inf, favorite_count, retweet_count) values (?, ?, ?, ?)"
-                    , [text, datetime.datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])
+                    , [text, datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])
         con.commit()
 
+# 指定時間に動作する関数
+def specified_time():
 
+    format_day = "%Y/%m/%d-"
+    format_time = "%H:%M:%S"
+
+    # 次回は4時間後にクロール
+    next_process = datetime.now() + timedelta(hours=4)
+
+    next_date = next_process.strftime(format_day)
+    next_time = next_process.strftime(format_time)
+
+    # スケジューラー
+    scheduler = sched.scheduler(time.time, time.sleep)
+
+
+    # 指定時間になったら事項
+    run = datetime.strptime(next_date + next_time,  format_day + format_time)
+    run = int(time.mktime(run.utctimetuple()))
+
+    # 実行される関数を指定
+    scheduler.enterabs(run, 1, get_tweet)
+    scheduler.run()
+
+    # 次回実行時間を設定
+    t = threading.Thread(target=specified_time)
+    t.start()
+
+
+def main():
+    get_tweet()
+    t = threading.Thread(target=specified_time)
+    t.start()
 
 if __name__ == '__main__':
-    get_tweet()
+    main()
