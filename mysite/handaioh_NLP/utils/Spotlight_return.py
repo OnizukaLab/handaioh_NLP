@@ -39,14 +39,23 @@ def check_spotlight(tweets_list):
     quiz_cand_list = []
     for i in range(len(tweets_list)):
         text = tweets_list[i]['text']
+        title = tweets_list[i]['title']
         try:
-            annotations = spotlight.annotate(spotlight_server, text)
-            for j in range(len(annotations)):
-                word = annotations[j]['URI'].split('/')[-1]
+            annotations_text = spotlight.annotate(spotlight_server, text)
+            annotations_title = spotlight.annotate(spotlight_server, title)
+
+            text_surfaceform = {word['surfaceForm'] for word in annotations_text}
+            title_surfaceform = {word['surfaceForm'] for word in annotations_title}
+            blank_list_cand = list(text_surfaceform & title_surfaceform)
+            blank_list = []
+            for j in range(len(blank_list_cand)):
+                word = blank_list_cand[j]
                 if Candidate_selector(word):
-                    quiz_cand_list.append(tweets_list[i])
-                    break
-            # quiz_cand_list.append(tweets_list[i])
+                    blank_list.append(word)
+            if len(blank_list) != 0:
+                blank_cand = '_'.join(blank_list)
+                tweets_list[i].update({'blank_cand':blank_cand})
+                quiz_cand_list.append(tweets_list[i])
         except:
             pass
     return quiz_cand_list

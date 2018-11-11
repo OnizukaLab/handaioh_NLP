@@ -10,6 +10,7 @@ import threading
 from datetime import datetime, timedelta
 import sched
 import time
+import re
 
 
 con = sqlite3.connect('./db.sqlite3')
@@ -24,17 +25,38 @@ CK, CS, AT, AS = get_key()
 oauth = OAuth1Session(CK, CS, AT, AS)
 url = "https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name=YahooNewsTopics"
 
+def get_title(text):
+    title = re.search("【(.*?)】", text)
+    if title is None:
+        title_contentes = ''
+    else:
+        title_contentes = title.group(1)
+    return title_contentes
+
+def get_second_text(text):
+    second_text = ''
+    if len(text) > 1:
+        second_text = '。'.join(text[1:])
+    return second_text
+
 
 def get_tweet_list(twitter):
     tweets_list = []
 
     for tweet in twitter:
-        text = tweet['text'].split('\n\n')[-1].split('\n')[0]
-        text = text.split('。')[0] + '。'
+        text = tweet['text'].split('\n\n')[-1]
         if 'RT' in text or 'http' in text:
             continue
+        text = text.split('。')
+
+        first_text = text[0] + '。'
+        second_text = get_second_text(text)
+        title = get_title(tweet['text'])
+
         tweets_list.append({
-            'text':text,
+            'text':first_text,
+            'second_text':second_text,
+            'title':title,
             'date':tweet['created_at'],
             'favorite_count':int(tweet['favorite_count']),
             'retweet_count':int(tweet['retweet_count'])
@@ -53,13 +75,14 @@ def get_shape(date):
 def get_tweet():
     number = 200
     params = {
-        "count": "{}".format(number)
+        "count": "{}".format(number),
     }
     req = oauth.get(
         url,
         params=params
     )
     twitter = json.loads(req.text)
+    # pprint(twitter['next_results'])
     tweets_list = get_tweet_list(twitter)
     quiz_cand_list = check_spotlight(tweets_list)
     add_quiz_data(quiz_cand_list)
@@ -72,10 +95,12 @@ def add_quiz_data(quiz_cand_list):
         quiz_data = quiz_cand_list[i]
         text, date = quiz_data['text'], quiz_data['date']
         favorite_count, retweet_count = quiz_data['favorite_count'], quiz_data['retweet_count']
+        second_text, title = quiz_data['second_text'], quiz_data['title']
+        blank_cand = quiz_data['blank_cand']
         year, month, day, hour, minitue, sec = get_shape(date)
 
-        con.execute("insert into handaioh_NLP_quiz (text, date_inf, favorite_count, retweet_count) values (?, ?, ?, ?)"
-                    , [text, datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])
+        con.execute("insert into handaioh_NLP_quiz (text, title, blank_cand, second_text, date_inf, favorite_count, retweet_count) values (?, ?, ?, ?, ?, ?, ?)"
+                    , [text, title, blank_cand, second_text, datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])
         con.commit()
 
 # 指定時間に動作する関数
@@ -86,6 +111,7 @@ def specified_time():
 
     # 次回は4時間後にクロール
     next_process = datetime.now() + timedelta(hours=4)
+    print('next crawling time is {}'.format(next_process))
 
     next_date = next_process.strftime(format_day)
     next_time = next_process.strftime(format_time)
