@@ -21,22 +21,31 @@ class QuizViewSet(APIView):
 
     def make_response(self, data):
         qid = random.randint(0,len(data)-1)
+        target_word = random.choice(data[qid]['blank_cand'].split('_'))
 
-        quiz = Spotlight_return(data[qid]['text'])
+        if target_word.isdigit():
+            # ここに空欄が数字だったときのcandidatesとquizの生成をよろです
+            candidates = ['1', '1', '1']
+            quiz = {'dbpedia_entity': '数字','word': target_word,
+                    'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
+            pass
+        else:
+            quiz = Spotlight_return(data[qid]['text'], target_word)
+            candidates = Candidate_selector(target_word)
+            if candidates is None: candidates = ['___', '___', '___']
+
+        candidates.append(target_word)
+        random.shuffle(candidates)
+        ans = candidates.index(target_word)
+
         favorite_count = data[qid]['favorite_count']
         retweet_count = data[qid]['retweet_count']
         date_inf = data[qid]['date_inf']
-        # for testing
-        # quiz = {'dbpedia_entity': '組織' , 'word': 'NASA', 'q_sentence': '____は8月に打ち上げられた太陽探査機が、太陽に最も接近した人工物として新記録を達成したと発表。'}
-        candidates = Candidate_selector(quiz['word'])
-        if candidates is None: candidates = ['___', '___', '___']
-        candidates.append(quiz['word'])
-        random.shuffle(candidates)
-        ans = candidates.index(quiz['word'])
 
         return_data = {
             'quiz'          : quiz['q_sentence'],
             'candidate'     : candidates,
+            'ans_word'      : target_word,
             'ans_id'        : ans,
             'entity_name'   : quiz['dbpedia_entity'],
             'favorite_count': favorite_count,
