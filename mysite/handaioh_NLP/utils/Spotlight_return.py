@@ -6,19 +6,17 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/').resolve()))
 from Candidate_selector import Candidate_selector
+import re
 
 spotlight_server = 'http://localhost:2250/rest/annotate'
 # spotlight_server = 'http://10.0.16.1:2250/rest/annotate'
 
-def Spotlight_return(sentence):
+def Spotlight_return(sentence, target_word):
     annotations = spotlight.annotate(spotlight_server, sentence)
-    rand_list = list(range(len(annotations)))
-    random.shuffle(rand_list)
-    for num in rand_list:
-        pick_up = annotations[num]
-        if Candidate_selector(pick_up['surfaceForm']) != None:
+    for i in range(len(annotations)):
+        pick_up = annotations[i]
+        if pick_up['surfaceForm'] == target_word:
             break
-
     data = {
         'dbpedia_entity': pick_up['URI'].split('/')[-1],
         'word'          : pick_up['surfaceForm'],
@@ -35,18 +33,37 @@ def Spotlight_vocab(word):
     except:
         return False
 
+def get_number(text, title):
+    num_title = set(re.findall("([0-9]+)", title))
+    num_text = set(re.findall("([0-9]+)", text))
+    return num_title & num_text
+
+
 def check_spotlight(tweets_list):
     quiz_cand_list = []
     for i in range(len(tweets_list)):
         text = tweets_list[i]['text']
+        title = tweets_list[i]['title']
         try:
-            annotations = spotlight.annotate(spotlight_server, text)
-            for j in range(len(annotations)):
-                word = annotations[j]['URI'].split('/')[-1]
-                if Candidate_selector(word):
-                    quiz_cand_list.append(tweets_list[i])
-                    break
-            # quiz_cand_list.append(tweets_list[i])
+            annotations_text = spotlight.annotate(spotlight_server, text)
+            annotations_title = spotlight.annotate(spotlight_server, title)
+
+            text_surfaceform = {word['surfaceForm'] for word in annotations_text}
+            title_surfaceform = {word['surfaceForm'] for word in annotations_title}
+            number_set = get_number(text, title)
+            blank_list_cand = list(text_surfaceform & title_surfaceform)
+            blank_list = []
+            for j in range(len(blank_list_cand)):
+                word = blank_list_cand[j]
+                if Candidate_selector(word) or word.isdigit():
+                    blank_list.append(word)
+            for word in number_set:
+                if word not in blank_list:
+                    blank_list.append(word)
+            if len(blank_list) != 0:
+                blank_cand = '_'.join(blank_list)
+                tweets_list[i].update({'blank_cand':blank_cand})
+                quiz_cand_list.append(tweets_list[i])
         except:
             pass
     return quiz_cand_list
