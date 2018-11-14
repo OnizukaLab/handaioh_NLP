@@ -22,8 +22,10 @@ class QuizViewSet(APIView):
     def make_response(self, data):
         qid = random.randint(0,len(data)-1)
         target_word = random.choice(data[qid]['blank_cand'].split('_'))
+        digit_flg = False
 
         if target_word.isdigit():
+            digit_flg = True
             candidates = digit_candidate(target_word)
             quiz = {'dbpedia_entity': '数字','word': target_word,
                     'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
@@ -36,6 +38,8 @@ class QuizViewSet(APIView):
         random.shuffle(candidates)
         ans = candidates.index(target_word)
 
+        second_text = data[qid]['second_text']
+        title = data[qid]['title']
         favorite_count = data[qid]['favorite_count']
         retweet_count = data[qid]['retweet_count']
         date_inf = data[qid]['date_inf']
@@ -43,12 +47,15 @@ class QuizViewSet(APIView):
         return_data = {
             'quiz'          : quiz['q_sentence'],
             'candidate'     : candidates,
+            'title'         : title,
+            'second_text'   : second_text,
             'ans_word'      : target_word,
             'ans_id'        : ans,
             'entity_name'   : quiz['dbpedia_entity'],
             'favorite_count': favorite_count,
             'retweet_count' : retweet_count,
             'date_inf'      : date_inf
+            'digit_flg'     : digit_flg
         }
         return return_data
 
