@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import random
 from .utils.Spotlight_return import Spotlight_return
-from .utils.Candidate_selector import Candidate_selector
+from .utils.Candidate_selector import Candidate_selector, digit_candidate
 
 sys.path.append('handaioh_NLP/utils/')
 
@@ -24,11 +24,9 @@ class QuizViewSet(APIView):
         target_word = random.choice(data[qid]['blank_cand'].split('_'))
 
         if target_word.isdigit():
-            # ここに空欄が数字だったときのcandidatesとquizの生成をよろです
-            candidates = ['1', '1', '1']
+            candidates = digit_candidate(target_word)
             quiz = {'dbpedia_entity': '数字','word': target_word,
                     'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
-            pass
         else:
             quiz = Spotlight_return(data[qid]['text'], target_word)
             candidates = Candidate_selector(target_word)
