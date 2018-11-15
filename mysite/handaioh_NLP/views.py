@@ -54,7 +54,7 @@ class QuizViewSet(APIView):
             'entity_name'   : quiz['dbpedia_entity'],
             'favorite_count': favorite_count,
             'retweet_count' : retweet_count,
-            'date_inf'      : date_inf
+            'date_inf'      : date_inf,
             'digit_flg'     : digit_flg
         }
         return return_data
