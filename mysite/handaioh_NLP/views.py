@@ -31,7 +31,7 @@ class QuizViewSet(APIView):
                     'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
         else:
             quiz = Spotlight_return(data[qid]['text'], target_word)
-            quiz = quiz_generator(quiz['origin_text'], quiz['word'])
+            quiz['q_sentence'] = quiz_generator(quiz['origin_text'], quiz['word'])
             candidates = Candidate_selector(target_word)
             if candidates is None: candidates = ['___', '___', '___']
 
@@ -47,7 +47,7 @@ class QuizViewSet(APIView):
         date_inf = data[qid]['date_inf']
 
         return_data = {
-            'quiz'          : quiz,
+            'quiz'          : quiz['q_sentence'],
             'candidate'     : candidates,
             'title'         : title,
             'second_text'   : second_text,
