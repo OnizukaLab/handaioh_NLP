@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import random
 from .utils.Spotlight_return import Spotlight_return
-from .utils.Candidate_selector import Candidate_selector, digit_candidate
+from .utils.Candidate_selector import Candidate_selector, digit_candidate, quiz_generator
 
 sys.path.append('handaioh_NLP/utils/')
 
@@ -31,8 +31,10 @@ class QuizViewSet(APIView):
                     'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
         else:
             quiz = Spotlight_return(data[qid]['text'], target_word)
+            quiz = quiz_generator(quiz['origin_text'], quiz['word'])
             candidates = Candidate_selector(target_word)
             if candidates is None: candidates = ['___', '___', '___']
+
 
         candidates.append(target_word)
         random.shuffle(candidates)
@@ -54,7 +56,7 @@ class QuizViewSet(APIView):
             'entity_name'   : quiz['dbpedia_entity'],
             'favorite_count': favorite_count,
             'retweet_count' : retweet_count,
-            'date_inf'      : date_inf
+            'date_inf'      : date_inf,
             'digit_flg'     : digit_flg
         }
         return return_data
