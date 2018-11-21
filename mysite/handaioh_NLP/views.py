@@ -47,7 +47,7 @@ class QuizViewSet(APIView):
         date_inf = data[qid]['date_inf']
 
         return_data = {
-            'quiz'          : quiz['q_sentence'],
+            'quiz'          : quiz,
             'candidate'     : candidates,
             'title'         : title,
             'second_text'   : second_text,
