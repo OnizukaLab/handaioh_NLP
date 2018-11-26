@@ -25,7 +25,11 @@ SECRET_KEY = 'x(#t=u+kh74s(rj7+pp)vvvd3#t462s@&_ois=9s(no5vv&d5g'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.16.1', 'localhost', '127.0.0.1', 'bd-ensyu.ist.osaka-u.ac.jp']
+ALLOWED_HOSTS = ['10.0.16.1',
+                 'localhost',
+                 '127.0.0.1',
+                 '133.1.244.71',
+                 'bd-ensyu.ist.osaka-u.ac.jp']
 
 
 # Application definition
@@ -46,6 +50,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,18 +59,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL=True
+
 ROOT_URLCONF = 'mysite.urls'
-
-# CORS_ORIGIN_ALLOW_ALL=True
-
-CORS_ORIGIN_WHITELIST = (
-        'bd-ensyu.ist.osaka-u.ac.jp',
-        '133.1.244.71',
-        )
 
 TEMPLATES = [
     {

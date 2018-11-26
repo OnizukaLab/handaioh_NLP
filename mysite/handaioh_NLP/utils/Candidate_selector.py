@@ -64,13 +64,13 @@ def quiz_generator(raw_sentence, target):
                     question_phrase = repl_align[[word['NE'] for word in target_phrase.words if word['word'] == target][0]]
                     question_phrase = 'したのは{}でしょう？'.format(question_phrase)
                     quiz = ''.join([word['word'] for chunk in deps for word in chunk.words]) + question_phrase
-                    return quiz
+                    return quiz, True
                 else:
                     base_sentence = ''.join([word['word'] for chunk in deps for word in chunk.words])
                     question_phrase = repl_align[[word['NE'] for word in deps[idx].words if word['word'] == target][0]]
                     quiz = base_sentence.replace(target, question_phrase) + 'したでしょう？'
-                    return quiz
-    else: return raw_sentence.replace(target, '[question]')
+                    return quiz, True
+    else: return raw_sentence.replace(target, '[question]'), False
 
 def Candidate_selector(word, topn=3):
     return [word for (word, _) in model.most_similar(word, topn=topn)] if word in model.wv.vocab else None
