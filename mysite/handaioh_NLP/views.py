@@ -30,7 +30,7 @@ class QuizViewSet(APIView):
             quiz = {'dbpedia_entity': '数字','word': target_word,
                     'q_sentence': data[qid]['text'].replace(target_word, '[question]'),'origin_text': data[qid]['text']}
         else:
-            quiz = Spotlight_return(data[qid]['text'], target_word)
+            quiz, convert_flg = Spotlight_return(data[qid]['text'], target_word)
             quiz['q_sentence'] = quiz_generator(quiz['origin_text'], quiz['word'])
             candidates = Candidate_selector(target_word)
             if candidates is None: candidates = ['___', '___', '___']
@@ -57,7 +57,8 @@ class QuizViewSet(APIView):
             'favorite_count': favorite_count,
             'retweet_count' : retweet_count,
             'date_inf'      : date_inf,
-            'digit_flg'     : digit_flg
+            'digit_flg'     : digit_flg,
+            'convert_flg'   : convert_flg
         }
         return return_data
 

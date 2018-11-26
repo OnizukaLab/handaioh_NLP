@@ -7,7 +7,7 @@ RUN apt-get -y upgrade
 RUN apt-get -y install git vim curl locales mecab libmecab-dev mecab-ipadic-utf8 make xz-utils file sudo bzip2 wget python3-pip swig
 RUN apt-get -y install libssl-dev libbz2-dev libreadline-dev libsqlite3-dev 
 # install pyenv
-ENV HOME /root
+ENV HOME /home
 RUN git clone https://github.com/yyuu/pyenv.git $HOME/.pyenv
 ENV PYENV_ROOT $HOME/.pyenv
 ENV PATH $PYENV_ROOT/bin:$PATH
@@ -37,6 +37,7 @@ RUN make && make install
 
 
 # install CaboCha
+WORKDIR /usr/src/
 RUN curl -sc /tmp/gcokie "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7SDd1Q1dUQkZQaUU" > /dev/null
 RUN getcode="$(awk '/_warning_/ {print $NF}' /tmp/gcokie)"
 RUN curl -Lb /tmp/gcokie "https://drive.google.com/uc?export=download&confirm=${getcode}&id=0B4y35FiV1wh7SDd1Q1dUQkZQaUU" -o cabocha-0.69.tar.bz2
@@ -47,11 +48,8 @@ RUN export CPPFLAGS="-I$HOME/usr/include"
 RUN ./configure --with-mecab-config=$HOME/usr/bin/mecab-config --with-charset=UTF8 --prefix=$HOME/usr
 RUN make && make install
 
-# python setup.py build
-# python setup.py --user install
-
 # add MeCab Neologd
-WORKDIR /usr/src/
+WORKDIR /home/handaioh
 RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git /usr/src/mecab-ipadic-neologd && \
 /usr/src/mecab-ipadic-neologd/bin/install-mecab-ipadic-neologd -n -y
 RUN mecab -d /usr/local/lib/mecab/dic/mecab-ipadic-neologd/
