@@ -28,7 +28,7 @@ class QuizViewSet(APIView):
             digit_flg = True
             candidates = digit_candidate(target_word)
             quiz = {'dbpedia_entity': '数字','word': target_word,
-                    'q_sentence': data[qid]['text'].replace(target_word, '[question]', 0),'origin_text': data[qid]['text']}
+                    'q_sentence': data[qid]['text'].replace(target_word, '[question]', 1),'origin_text': data[qid]['text']}
         else:
             quiz, convert_flg = Spotlight_return(data[qid]['text'], target_word)
             quiz['q_sentence'] = quiz_generator(quiz['origin_text'], quiz['word'])
