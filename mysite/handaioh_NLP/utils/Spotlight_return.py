@@ -8,8 +8,9 @@ sys.path.append(str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/').resolve()))
 from Candidate_selector import Candidate_selector
 import re
 
-spotlight_server = 'http://localhost:2250/rest/annotate'
+# spotlight_server = 'http://localhost:2250/rest/annotate'
 # spotlight_server = 'http://10.0.16.1:2250/rest/annotate'
+spotlight_server = 'http://133.1.244.71:2250/rest/annotate'
 
 def Spotlight_return(sentence, target_word):
     annotations = spotlight.annotate(spotlight_server, sentence)
