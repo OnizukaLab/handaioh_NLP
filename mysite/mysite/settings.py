@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'handaioh_NLP',
     'rest_framework',
     'django_filters',
+    'coreheaders',
 ]
 
 MIDDLEWARE = [
@@ -52,9 +53,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'
+
+# CORS_ORIGIN_ALLOW_ALL=True
+
+CORS_ORIGIN_WHITELIST = (
+        'bd-ensyu.ist.osaka-u.ac.jp',
+        '133.1.244.71',
+        )
 
 TEMPLATES = [
     {
