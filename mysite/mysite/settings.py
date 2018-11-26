@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'handaioh_NLP',
     'rest_framework',
     'django_filters',
-    'coreheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
