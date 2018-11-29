@@ -7,9 +7,16 @@ import CaboCha
 data_path = str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/data/word2vec.300d.ja.txt').resolve())
 model = KeyedVectors.load_word2vec_format(data_path)
 
+# IREXに準拠
 repl_align = {
-    'LOCATION': 'どこ',
+    'ORGANIZATION': 'どこの機関',
     'PERSON': '誰',
+    'LOCATION': 'どこの場所',
+    'DATE': 'いつ',
+    'TIME': 'いつ',
+    'MONEY': 'いくら',
+    'PERCENT': 'どのくらい',
+    'ARTIFACT': '何',
     'O': '何',
 }
 
