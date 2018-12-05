@@ -13,8 +13,6 @@ import time
 import re
 
 
-con = sqlite3.connect('./db.sqlite3')
-
 def get_key():
     text_name = './handaioh_NLP/utils/.key'
     with open(text_name, 'r') as f:
@@ -89,6 +87,7 @@ def get_tweet():
 
 
 def add_quiz_data(quiz_cand_list):
+    con = sqlite3.connect('./db.sqlite3')
     con.execute("DELETE FROM handaioh_NLP_quiz")
     con.commit()
     for i in range(len(quiz_cand_list)):
