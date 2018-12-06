@@ -33,7 +33,7 @@ class QuizViewSet(APIView):
         else:
             quiz = Spotlight_return(data[qid]['text'], target_word)
             quiz['q_sentence'], convert_flg = quiz_generator(quiz['origin_text'], quiz['word'])
-            candidates = Candidate_selector(target_word)
+            candidates = Candidate_selector(quiz['dbpedia_entity'])
             if candidates is None: candidates = ['___', '___', '___']
 
 
