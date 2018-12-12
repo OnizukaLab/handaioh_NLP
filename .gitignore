@@ -14,3 +14,4 @@ mysite/db.sqlite3
 mysite/handaioh_NLP/utils/data/
 mysite/handaioh_NLP/utils/.key
 mysite/handaioh_NLP/migrations/
+mysite/ans_list.txt
