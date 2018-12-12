@@ -4,7 +4,7 @@ import json
 from pprint import pprint
 import sys
 sys.path.append('handaioh_NLP/utils/')
-from Spotlight_return import check_spotlight
+from Spotlight_return import check_spotlight, Spotlight_return
 import sqlite3
 import threading
 from datetime import datetime, timedelta
@@ -86,6 +86,19 @@ def get_tweet():
     add_quiz_data(quiz_cand_list)
 
 
+def write_ans_word(blank_cand):
+    out_name = 'ans_list.txt'
+    with open(out_name, 'a') as out:
+        for words in blank_cand.split('_'):
+            if words.isdigit():
+                pass
+            else:
+                words = Spotlight_return(words, words)['dbpedia_entity']
+            out.write('{}\n'.format(words))
+            # for word in words.split('_'):
+            #     out.write('{}\n'.format(word))
+
+
 def add_quiz_data(quiz_cand_list):
     con = sqlite3.connect('./db.sqlite3')
     con.execute("DELETE FROM handaioh_NLP_quiz")
@@ -97,6 +110,8 @@ def add_quiz_data(quiz_cand_list):
         second_text, title = quiz_data['second_text'], quiz_data['title']
         blank_cand = quiz_data['blank_cand']
         year, month, day, hour, minitue, sec = get_shape(date)
+        # print(blank_cand)
+        write_ans_word(blank_cand)
 
         con.execute("insert into handaioh_NLP_quiz (text, title, blank_cand, second_text, date_inf, favorite_count, retweet_count) values (?, ?, ?, ?, ?, ?, ?)"
                     , [text, title, blank_cand, second_text, datetime(year, month, day, hour, minitue, sec), favorite_count, retweet_count])

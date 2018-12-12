@@ -3,6 +3,9 @@ from mysite.settings import BASE_DIR
 from pathlib import Path
 import random, re
 import CaboCha
+import sys
+sys.path.append(str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/').resolve()))
+# from Spotlight_return import Spotlight_return
 
 data_path = str(Path(BASE_DIR).joinpath('handaioh_NLP/utils/data/word2vec.300d.ja.txt').resolve())
 model = KeyedVectors.load_word2vec_format(data_path)
@@ -79,8 +82,29 @@ def quiz_generator(raw_sentence, target):
                     return quiz, True
     else: return raw_sentence.replace(target, '[question]'), False
 
-def Candidate_selector(word, topn=3):
-    return [word for (word, _) in model.most_similar(word, topn=topn)] if word in model.wv.vocab else None
+def Candidate_selector(word, topn=30):
+    from Spotlight_return import Spotlight_return
+    cad_list = []
+    if word in model.wv.vocab:
+        for (word_cand, _) in model.most_similar(word, topn=topn):
+            try:
+                dami = Spotlight_return(word_cand, word_cand)
+            except:
+                continue
+            if Spotlight_return(word_cand, word_cand)['dbpedia_entity'] == Spotlight_return(word, word)['dbpedia_entity']:
+                continue
+            for i in range(len(cad_list)):
+                if Spotlight_return(word_cand, word_cand)['dbpedia_entity'] == Spotlight_return(cad_list[i], cad_list[i])['dbpedia_entity']:
+                    break
+            else:
+                cad_list.append(word_cand)
+            if len(cad_list) == 3:
+                break
+    else:
+        cad_list = None
+
+    # return [word for (word, _) in model.most_similar(word, topn=topn)] if word in model.wv.vocab else None
+    return cad_list
 
 def digit_candidate(num):
     Int_Frac = num.split('.')

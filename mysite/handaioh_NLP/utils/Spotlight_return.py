@@ -34,6 +34,7 @@ def Spotlight_vocab(word):
     except:
         return False
 
+
 def get_number(text, title):
     num_title = set(re.findall("([0-9]+)", title))
     num_text = set(re.findall("([0-9]+)", text))
